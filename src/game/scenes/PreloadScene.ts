@@ -50,38 +50,19 @@ export class PreloadScene extends Phaser.Scene {
 
     // ===== LOAD ALL GAME ASSETS =====
 
-    // Tileset spritesheets (16x16 or 32x32 tiles)
-    this.load.image('tiles-forestia', 'assets/forestia/tileset.png');
-    this.load.image('tiles-aquaria',  'assets/aquaria/tileset.png');
+    // Kenney Tiny Town tileset (packed spritesheet, 16×16 tiles, 12 cols × 11 rows)
+    this.load.image('tilemap-packed', 'assets/shared/tilemap_packed.png');
 
-    // Player sprite (animated)
-    this.load.spritesheet('player', 'assets/shared/player.png', {
-      frameWidth: 32,
-      frameHeight: 48,
-    });
+    // Player sprite (we use procedural drawing, but still need a key)
+    // Individual Kenney tiles for object sprites (for interactables)
+    // We load a few key individual tiles as named images
+    this.load.image('obj-tree',    'assets/tiles/tile_0010.png');  // tree top
+    this.load.image('obj-stump',   'assets/tiles/tile_0008.png');  // flower/stump
+    this.load.image('obj-station', 'assets/tiles/tile_0060.png');  // building/station
+    this.load.image('obj-recycle', 'assets/tiles/tile_0096.png');  // another building
+    this.load.image('obj-factory', 'assets/tiles/tile_0072.png');  // factory-ish tile
+    this.load.image('obj-pump',    'assets/tiles/tile_0108.png');  // water tile
 
-    // Tiled maps
-    this.load.tilemapTiledJSON('map-forestia', 'maps/forestia.json');
-    this.load.tilemapTiledJSON('map-aquaria',  'maps/aquaria.json');
-
-    // Environment objects
-    this.load.image('tree-healthy',   'assets/forestia/tree_healthy.png');
-    this.load.image('tree-damaged',   'assets/forestia/tree_damaged.png');
-    this.load.image('tree-dead',      'assets/forestia/tree_dead.png');
-    this.load.image('ranger-station', 'assets/forestia/ranger_station.png');
-    this.load.image('recycling',      'assets/forestia/recycling_station.png');
-    this.load.image('water-pump',     'assets/aquaria/water_pump.png');
-    this.load.image('factory',        'assets/aquaria/factory.png');
-    this.load.image('water-plant',    'assets/aquaria/water_treatment.png');
-
-    // NPCs
-    this.load.spritesheet('npc-ranger', 'assets/shared/npc_ranger.png', { frameWidth: 32, frameHeight: 48 });
-    this.load.spritesheet('npc-fisher', 'assets/shared/npc_fisher.png', { frameWidth: 32, frameHeight: 48 });
-
-    // Particles / FX
-    this.load.image('particle-leaf',  'assets/shared/particle_leaf.png');
-    this.load.image('particle-water', 'assets/shared/particle_water.png');
-    this.load.image('particle-star',  'assets/shared/particle_star.png');
   }
 
   create() {

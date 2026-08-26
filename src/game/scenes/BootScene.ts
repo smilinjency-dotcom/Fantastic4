@@ -6,8 +6,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    // Load only the loading screen assets here
-    this.load.image('logo', 'assets/shared/logo.png');
+    // Nothing to load in Boot — all assets are loaded in PreloadScene
   }
 
   create() {
