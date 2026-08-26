@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { eventBus } from '../EventBus';
 
 export class PreloadScene extends Phaser.Scene {
   private progressBar!: Phaser.GameObjects.Graphics;
@@ -66,9 +67,12 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create() {
+    // Tell React that Phaser is ready
+    eventBus.emit('game-ready');
+    
     // Small delay so player sees 100%
     this.time.delayedCall(300, () => {
-      this.scene.start('ForestiaScene');
+      // We don't start scenes here anymore; React handles the initial scene start
       this.scene.start('UIScene');
     });
   }

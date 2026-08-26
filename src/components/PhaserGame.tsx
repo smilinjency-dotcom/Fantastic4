@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createGame } from '../game/game';
 import { eventBus } from '../game/EventBus';
 import { useGameStore } from '../stores/gameStore';
@@ -12,6 +12,7 @@ export function PhaserGame({ world }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
   const openModal = useGameStore(s => s.openModal);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current || gameRef.current) return;
@@ -24,10 +25,14 @@ export function PhaserGame({ world }: Props) {
     const handleInteraction = (data: { type: 'lesson' | 'quest' | 'minigame' | 'dialogue'; id: string }) => {
       openModal(data.type, data.id);
     };
+    const handleReady = () => setIsReady(true);
+
     eventBus.on('interaction', handleInteraction);
+    eventBus.on('game-ready', handleReady);
 
     return () => {
       eventBus.off('interaction', handleInteraction);
+      eventBus.off('game-ready', handleReady);
       game.destroy(true);
       gameRef.current = null;
     };
@@ -35,7 +40,7 @@ export function PhaserGame({ world }: Props) {
 
   // Switch scene when world changes
   useEffect(() => {
-    if (!gameRef.current) return;
+    if (!gameRef.current || !isReady) return;
     const game = gameRef.current;
     
     const scenes = {
