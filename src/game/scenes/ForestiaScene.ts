@@ -8,35 +8,22 @@ export type WorldState = 'damaged' | 'recovering' | 'thriving';
 // Kenney Tiny Town tile indices (0-based in spritesheet, 12 cols × 11 rows)
 // Tile IDs in Phaser tilemap are 1-indexed (0 = empty)
 const T = {
-  GRASS:       1,   // plain green grass
-  GRASS2:      2,   // slightly different grass
-  GRASS3:      3,   // another grass variant
-  DIRT:        4,   // bare dirt / deforested
-  DIRT2:       5,
-  SAND:        7,
-  WATER:       109, // blue water tile
-  WATER2:      110,
-  WATER3:      111,
-  PATH_H:      37,  // horizontal path
-  PATH_V:      49,  // vertical path  
-  PATH_TL:     36,  // path corner top-left
-  PATH_TR:     38,  // path corner top-right
-  PATH_BL:     48,  // path corner bottom-left
-  PATH_BR:     50,  // path corner bottom-right
-  TREE_TL:     11,  // tree top-left
-  TREE_TR:     12,  // tree top-right  
-  TREE_BL:     23,  // tree bottom-left
-  TREE_BR:     24,  // tree bottom-right
-  DEAD_TREE_T: 21,  // dead/damaged tree top
-  DEAD_TREE_B: 33,  // dead/damaged tree bottom
-  STUMP:       9,   // tree stump (deforested)
-  BUSH:        10,  // small bush
-  FLOWER:      8,   // flower patch
-  STONE_WALL:  61,  // stone wall for ranger station
-  BUILDING_TL: 49,
-  ROOF_R:      52,
-  FENCE_H:     97,  // horizontal fence
-  FENCE_V:     109,
+  GRASS:        1,   // plain green grass (tile_0000)
+  GRASS2:       2,   // grass variant (tile_0001)
+  GRASS3:       3,   // grass variant (tile_0002)
+  DIRT:         14,  // bare dirt / deforested (tile_0013)
+  WATER:        109, // light blue-grey stone tile (tile_0108)
+  WATER2:       110,
+  PATH_H:       40,  // horizontal dirt road (tile_0039)
+  PATH_V:       41,  // vertical dirt road (tile_0040)
+  PATH_X:       42,  // crossroads dirt road (tile_0041)
+  TREE_T:       5,   // green pine top (tile_0004)
+  TREE_B:       17,  // green pine trunk (tile_0016)
+  DEAD_TREE_T:  4,   // yellow/damaged pine top (tile_0003)
+  DEAD_TREE_B:  16,  // yellow/damaged pine trunk (tile_0015)
+  STUMP:        10,  // yellow bush/stump (tile_0009)
+  BUSH:         6,   // green round bush (tile_0005)
+  FLOWER:       48,  // red mushrooms/flowers (tile_0047)
 };
 
 /** 
@@ -59,7 +46,7 @@ function buildForestiaGround(): number[] {
     }
   }
 
-  // River/stream through right side
+  // River/stream through right side (canal)
   for (let y = 0; y < H; y++) {
     set(22, y, T.WATER);
     set(23, y, T.WATER2);
@@ -74,6 +61,9 @@ function buildForestiaGround(): number[] {
   for (let x = 5; x <= 20; x++) {
     set(x, 18, T.PATH_H);
   }
+  // Intersection
+  set(14, 18, T.PATH_X);
+  set(15, 18, T.PATH_X);
 
   // Grass variation sprinkles
   const grassVariants = [T.GRASS2, T.GRASS3];
@@ -99,7 +89,7 @@ function buildForestiaDetails(): number[] {
 
   // Dense forest — healthy trees (top-left area)
   const healthyForest = [
-    [1,1],[2,1],[4,1],[5,1],[7,2],[1,3],[3,3],[6,3],
+    [1,1],[2,1],[4,1],[5,1],[7,2],[1,3],[3,3],[6,3],[8,3],
     [1,5],[4,5],[7,5],[2,6],[5,6],[1,7],[3,7],[6,7],
     [2,9],[4,9],[6,9],[1,10],[3,10],[5,10],
     [1,12],[2,12],[4,12],[6,12],[7,12],
@@ -111,20 +101,20 @@ function buildForestiaDetails(): number[] {
     [1,26],[2,26],[4,26],[6,26],
   ];
   for (const [x, y] of healthyForest) {
-    // 2×2 tree sprite
-    set(x, y,   T.TREE_TL); set(x+1, y,   T.TREE_TR);
-    set(x, y+1, T.TREE_BL); set(x+1, y+1, T.TREE_BR);
+    // 1×2 pine tree
+    set(x, y,     T.TREE_T);
+    set(x, y + 1, T.TREE_B);
   }
 
   // Damaged / dead trees in deforested area
-  const deadTrees = [[9,7],[11,7],[13,7],[10,9],[12,9],[14,6]];
+  const deadTrees = [[9,8],[11,8],[13,8],[10,9],[12,9],[14,8]];
   for (const [x, y] of deadTrees) {
-    set(x, y,   T.DEAD_TREE_T);
-    set(x, y+1, T.DEAD_TREE_B);
+    set(x, y,     T.DEAD_TREE_T);
+    set(x, y + 1, T.DEAD_TREE_B);
   }
 
   // Stumps in deforested area
-  const stumps = [[10,10],[12,10],[11,11],[13,11],[9,12],[14,11]];
+  const stumps = [[10,11],[12,11],[11,12],[13,12],[9,13],[14,12]];
   for (const [x, y] of stumps) {
     set(x, y, T.STUMP);
   }
@@ -141,8 +131,8 @@ function buildForestiaDetails(): number[] {
     [25,13],[27,13],[26,16],[25,19],[27,19],[26,22],[25,25],[27,25],[26,28],
   ];
   for (const [x, y] of rightForest) {
-    set(x, y,   T.TREE_TL); set(x+1, y,   T.TREE_TR);
-    set(x, y+1, T.TREE_BL); set(x+1, y+1, T.TREE_BR);
+    set(x, y,     T.TREE_T);
+    set(x, y + 1, T.TREE_B);
   }
 
   // Bushes scattered

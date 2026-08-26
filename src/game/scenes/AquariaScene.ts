@@ -5,28 +5,25 @@ import type { GameEventBus } from '../EventBus';
 
 // Tile constants (1-indexed for our map arrays, converted to 0-indexed for putTileAt)
 const T = {
-  GRASS:    1,
-  GRASS2:   2,
-  GRASS3:   3,
-  SAND:     7,
-  WATER:    109,
-  WATER2:   110,
-  WATER3:   111,
-  WATER_DIRTY: 7,  // brownish sandy tile for polluted water
-  PATH_H:   37,
-  PATH_V:   49,
-  PATH_TL:  36,
-  PATH_TR:  38,
-  PATH_BL:  48,
-  PATH_BR:  50,
-  PATH_X:   61,    // crossroads
-  TREE_TL:  11,
-  TREE_TR:  12,
-  TREE_BL:  23,
-  TREE_BR:  24,
-  BUSH:     10,
-  FLOWER:   8,
-  STUMP:    9,
+  GRASS:        1,   // plain green grass (tile_0000)
+  GRASS2:       2,   // grass variant (tile_0001)
+  GRASS3:       3,   // grass variant (tile_0002)
+  SAND:         14,  // bare mud/dirt representing polluted dry riverbed (tile_0013)
+  WATER:        109, // light blue-grey stone tile for clean restored water canal (tile_0108)
+  WATER2:       110,
+  WATER3:       109,
+  PATH_H:       40,  // horizontal dirt road (tile_0039)
+  PATH_V:       41,  // vertical dirt road (tile_0040)
+  PATH_TL:      40,
+  PATH_TR:      40,
+  PATH_BL:      40,
+  PATH_BR:      40,
+  PATH_X:       42,  // crossroads (tile_0041)
+  TREE_T:       5,   // green pine top (tile_0004)
+  TREE_B:       17,  // green pine trunk (tile_0016)
+  BUSH:         6,   // green round bush (tile_0005)
+  FLOWER:       48,  // red mushrooms/flowers (tile_0047)
+  STUMP:        10,  // yellow bush/stump (tile_0009)
 };
 
 function buildAquariaGround(): number[] {
@@ -40,11 +37,11 @@ function buildAquariaGround(): number[] {
   // Wide river down the center
   for (let y = 0; y < H; y++) {
     for (let x = 12; x <= 17; x++) {
-      // Polluted in middle section, clean at top and bottom
+      // Polluted in middle section (dry/muddy sand), clean at top and bottom (clean canal)
       const polluted = y >= 8 && y <= 22;
       set(x, y, polluted ? T.SAND : T.WATER);
     }
-    // River edges (water)
+    // River edges (clean canal tiles)
     set(11, y, T.WATER3);
     set(18, y, T.WATER3);
   }
@@ -101,8 +98,8 @@ function buildAquariaDetails(): number[] {
     if (x >= 0 && x < W && y >= 0 && y < H) map[y * W + x] = id;
   };
   const tree = (x: number, y: number) => {
-    set(x, y, T.TREE_TL); set(x+1, y, T.TREE_TR);
-    set(x, y+1, T.TREE_BL); set(x+1, y+1, T.TREE_BR);
+    set(x, y,     T.TREE_T);
+    set(x, y + 1, T.TREE_B);
   };
 
   // Left bank vegetation (residential / wetlands area)
