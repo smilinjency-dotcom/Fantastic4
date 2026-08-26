@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Player } from '../objects/Player';
 import { InteractableObject } from '../objects/InteractableObject';
 import type { GameEventBus } from '../EventBus';
+import { useGameStore } from '../../stores/gameStore';
 
 // Tile constants (1-indexed for our map arrays, converted to 0-indexed for putTileAt)
 const T = {
@@ -217,6 +218,7 @@ export class AquariaScene extends Phaser.Scene {
       { tx: 3,  ty: 12, texture: 'obj-station', id: 'water_cycle_01',     type: 'lesson'   as const, label: '💧 Water Pump\n[E] Inspect' },
       { tx: 22, ty: 18, texture: 'obj-recycle', id: 'water_treat_01',     type: 'quest'    as const, label: '🚰 Water Treatment\n[E] Start Quest' },
       { tx: 3,  ty: 22, texture: 'obj-tree',    id: 'biodiversity_01',    type: 'lesson'   as const, label: '🌿 Wetland\n[E] Learn' },
+      { tx: 5,  ty: 15, texture: 'obj-station', id: 'portal_hub',         type: 'portal_hub' as const, label: 'Portal: Greenhaven\n[E] Return' },
     ];
 
     for (const item of items) {
@@ -287,8 +289,12 @@ export class AquariaScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.interactKey) && this.nearbyObject) {
-      const eventBus: GameEventBus = (this.game as any).eventBus;
-      eventBus?.emit('interaction', { type: this.nearbyObject.interactionType, id: this.nearbyObject.interactionId });
+      if (this.nearbyObject.interactionType === 'portal_hub') {
+        useGameStore.getState().setWorld('greenhaven');
+      } else {
+        const eventBus: GameEventBus = (this.game as any).eventBus;
+        eventBus?.emit('interaction', { type: this.nearbyObject.interactionType, id: this.nearbyObject.interactionId });
+      }
     }
   }
 }

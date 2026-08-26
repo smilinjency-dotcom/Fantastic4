@@ -5,7 +5,7 @@ import { useGameStore } from '../stores/gameStore';
 import type Phaser from 'phaser';
 
 interface Props {
-  world: 'forestia' | 'aquaria';
+  world: 'greenhaven' | 'forestia' | 'aquaria';
 }
 
 export function PhaserGame({ world }: Props) {
@@ -21,7 +21,7 @@ export function PhaserGame({ world }: Props) {
     gameRef.current = game;
 
     // Listen for Phaser → React events
-    const handleInteraction = (data: { type: 'lesson' | 'quest' | 'minigame'; id: string }) => {
+    const handleInteraction = (data: { type: 'lesson' | 'quest' | 'minigame' | 'dialogue'; id: string }) => {
       openModal(data.type, data.id);
     };
     eventBus.on('interaction', handleInteraction);
@@ -37,12 +37,24 @@ export function PhaserGame({ world }: Props) {
   useEffect(() => {
     if (!gameRef.current) return;
     const game = gameRef.current;
-    const sceneKey = world === 'forestia' ? 'ForestiaScene' : 'AquariaScene';
-    const other    = world === 'forestia' ? 'AquariaScene'  : 'ForestiaScene';
+    
+    const scenes = {
+      greenhaven: 'GreenhavenScene',
+      forestia: 'ForestiaScene',
+      aquaria: 'AquariaScene'
+    };
+    
+    const targetScene = scenes[world];
+    
+    // Stop all scenes except the target
+    Object.values(scenes).forEach(scene => {
+      if (scene !== targetScene) {
+        game.scene.stop(scene);
+      }
+    });
 
-    game.scene.stop(other);
-    if (!game.scene.isActive(sceneKey)) {
-      game.scene.start(sceneKey);
+    if (!game.scene.isActive(targetScene)) {
+      game.scene.start(targetScene);
     }
   }, [world]);
 

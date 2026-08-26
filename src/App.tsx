@@ -3,6 +3,7 @@ import { PhaserGame }        from './components/PhaserGame';
 import { HUD }               from './components/ui/HUD';
 import { WorldSelector }     from './components/ui/WorldSelector';
 import { InteractionModal }  from './components/modals/InteractionModal';
+import { DialogueModal }     from './components/modals/DialogueModal';
 import { useGameStore }      from './stores/gameStore';
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
 
       {/* ===== Modals ===== */}
       <InteractionModal />
+      <DialogueModal />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Player } from '../objects/Player';
 import { InteractableObject } from '../objects/InteractableObject';
 import type { GameEventBus } from '../EventBus';
+import { useGameStore } from '../../stores/gameStore';
 
 export type WorldState = 'damaged' | 'recovering' | 'thriving';
 
@@ -243,6 +244,7 @@ export class ForestiaScene extends Phaser.Scene {
       { tx: 11, ty: 10, texture: 'obj-stump',     id: 'pollution_01',     type: 'lesson'   as const, label: '🥀 Damaged Tree\n[E] Learn More' },
       { tx: 17, ty: 15, texture: 'obj-station',   id: 'deforestation_01', type: 'quest'    as const, label: '🏕️ Ranger Station\n[E] Talk to Ranger' },
       { tx: 12, ty: 24, texture: 'obj-recycle',   id: 'recycling_01',     type: 'minigame' as const, label: '♻️ Recycling Station\n[E] Play Mini-Game' },
+      { tx: 15, ty: 20, texture: 'obj-station',   id: 'portal_hub',       type: 'portal_hub' as const, label: 'Portal: Greenhaven\n[E] Return' },
     ];
 
     for (const item of items) {
@@ -316,8 +318,12 @@ export class ForestiaScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.interactKey) && this.nearbyObject) {
-      const eventBus: GameEventBus = (this.game as any).eventBus;
-      eventBus?.emit('interaction', { type: this.nearbyObject.interactionType, id: this.nearbyObject.interactionId });
+      if (this.nearbyObject.interactionType === 'portal_hub') {
+        useGameStore.getState().setWorld('greenhaven');
+      } else {
+        const eventBus: GameEventBus = (this.game as any).eventBus;
+        eventBus?.emit('interaction', { type: this.nearbyObject.interactionType, id: this.nearbyObject.interactionId });
+      }
     }
   }
 

@@ -24,11 +24,17 @@ export interface GameState {
   level: number;
   xp: number;
   xpToNext: number;
+  understanding: number;
+  restoration: number;
 
   // World
-  currentWorld: 'forestia' | 'aquaria';
+  currentWorld: 'greenhaven' | 'forestia' | 'aquaria';
   forestiaState: 'damaged' | 'recovering' | 'thriving';
   aquariaState:  'damaged' | 'recovering' | 'thriving';
+  crystals: {
+    forestia: boolean;
+    aquaria: boolean;
+  };
 
   // Progress
   quests: Quest[];
@@ -36,16 +42,19 @@ export interface GameState {
   completedLessons: string[];
 
   // UI
-  activeModal: null | { type: 'lesson' | 'quest' | 'minigame'; id: string };
+  activeModal: null | { type: 'lesson' | 'quest' | 'minigame' | 'dialogue'; id: string };
 
   // Actions
   addXP: (amount: number) => void;
+  addUnderstanding: (amount: number) => void;
+  addRestoration: (amount: number) => void;
   completeQuest: (id: string) => void;
   unlockBadge: (id: string) => void;
-  openModal: (type: 'lesson' | 'quest' | 'minigame', id: string) => void;
+  openModal: (type: 'lesson' | 'quest' | 'minigame' | 'dialogue', id: string) => void;
   closeModal: () => void;
-  setWorld: (world: 'forestia' | 'aquaria') => void;
+  setWorld: (world: 'greenhaven' | 'forestia' | 'aquaria') => void;
   completeLesson: (id: string) => void;
+  awakenCrystal: (world: 'forestia' | 'aquaria') => void;
 }
 
 const INITIAL_QUESTS: Quest[] = [
@@ -82,10 +91,16 @@ export const useGameStore = create<GameState>((set, get) => ({
   level: 1,
   xp: 0,
   xpToNext: 200,
+  understanding: 0,
+  restoration: 0,
 
-  currentWorld: 'forestia',
+  currentWorld: 'greenhaven',
   forestiaState: 'damaged',
   aquariaState:  'damaged',
+  crystals: {
+    forestia: false,
+    aquaria: false,
+  },
 
   quests: INITIAL_QUESTS,
   badges: INITIAL_BADGES,
@@ -101,6 +116,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       set({ xp: newXP });
     }
   },
+
+  addUnderstanding: (amount) => set((state) => ({ understanding: Math.min(100, state.understanding + amount) })),
+  addRestoration: (amount) => set((state) => ({ restoration: Math.min(100, state.restoration + amount) })),
+
+  awakenCrystal: (world) => set((state) => ({
+    crystals: { ...state.crystals, [world]: true }
+  })),
 
   completeQuest: (id) => {
     const quest = get().quests.find(q => q.id === id);

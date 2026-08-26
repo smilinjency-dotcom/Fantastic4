@@ -3,6 +3,7 @@ import { BootScene } from './scenes/BootScene';
 import { PreloadScene } from './scenes/PreloadScene';
 import { ForestiaScene } from './scenes/ForestiaScene';
 import { AquariaScene } from './scenes/AquariaScene';
+import { GreenhavenScene } from './scenes/GreenhavenScene';
 import { UIScene } from './scenes/UIScene';
 
 export const GAME_WIDTH = 1280;
@@ -15,7 +16,7 @@ export function createGame(parent: string): Phaser.Game {
     height: GAME_HEIGHT,
     parent,
     backgroundColor: '#0a0f1a',
-    scene: [BootScene, PreloadScene, ForestiaScene, AquariaScene, UIScene],
+    scene: [BootScene, PreloadScene, GreenhavenScene, ForestiaScene, AquariaScene, UIScene],
     physics: {
       default: 'arcade',
       arcade: {
