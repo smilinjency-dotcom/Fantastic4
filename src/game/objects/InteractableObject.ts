@@ -45,9 +45,13 @@ export class InteractableObject extends Phaser.GameObjects.Container {
     this.glowCircle = scene.add.circle(0, 2, 8, color, 0.3);
     this.add(this.glowCircle);
 
-    // The actual Kenney tile image (scaled up 2x since tiles are 16px and zoom is 3x)
-    const hasTexture = scene.textures.exists(texture);
-    if (hasTexture) {
+    // The actual Kenney tile image
+    const isFrame = !isNaN(Number(texture));
+    const hasTexture = !isFrame && scene.textures.exists(texture);
+    
+    if (isFrame) {
+      this.icon = scene.add.sprite(0, 0, 'tilemap-sprites', Number(texture)).setScale(1);
+    } else if (hasTexture) {
       this.icon = scene.add.image(0, 0, texture).setScale(1);
     } else {
       // Fallback drawn marker if texture missing
@@ -55,8 +59,7 @@ export class InteractableObject extends Phaser.GameObjects.Container {
       g.fillStyle(color, 0.9);
       g.fillCircle(0, 0, 6);
       this.add(g);
-      // dummy image ref
-      this.icon = scene.add.image(0, 0, '__DEFAULT').setVisible(false);
+      this.icon = scene.add.sprite(0, 0, 'tilemap-sprites', 0).setVisible(false);
     }
     this.add(this.icon);
 

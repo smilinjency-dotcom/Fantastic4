@@ -50,18 +50,18 @@ export class PreloadScene extends Phaser.Scene {
 
     // ===== LOAD ALL GAME ASSETS =====
 
-    // Kenney Tiny Town tileset (packed spritesheet, 16×16 tiles, 12 cols × 11 rows)
+    // Kenney Tiny Dungeon tileset
     this.load.image('tilemap-packed', 'assets/shared/tilemap_packed.png');
+    this.load.spritesheet('tilemap-sprites', 'assets/shared/tilemap_packed.png', { frameWidth: 16, frameHeight: 16 });
+
+    // Load Tiled JSON maps
+    this.load.tilemapTiledJSON('map-greenhaven', 'maps/greenhaven.json');
+    this.load.tilemapTiledJSON('map-forestia', 'maps/forestia.json');
+    this.load.tilemapTiledJSON('map-aquaria', 'maps/aquaria.json');
 
     // Player sprite (we use procedural drawing, but still need a key)
-    // Individual Kenney tiles for object sprites (for interactables)
-    // We load a few key individual tiles as named images
-    this.load.image('obj-tree',    'assets/tiles/tile_0010.png');  // tree top
-    this.load.image('obj-stump',   'assets/tiles/tile_0008.png');  // flower/stump
-    this.load.image('obj-station', 'assets/tiles/tile_0060.png');  // building/station
-    this.load.image('obj-recycle', 'assets/tiles/tile_0096.png');  // another building
-    this.load.image('obj-factory', 'assets/tiles/tile_0072.png');  // factory-ish tile
-    this.load.image('obj-pump',    'assets/tiles/tile_0108.png');  // water tile
+    // Individual tiles are no longer needed, using spritesheet frames directly
+    this.load.spritesheet('obj-sprites', 'assets/shared/tilemap_packed.png', { frameWidth: 16, frameHeight: 16 });
 
   }
 

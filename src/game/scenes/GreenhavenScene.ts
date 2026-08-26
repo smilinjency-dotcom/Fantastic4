@@ -4,33 +4,6 @@ import { InteractableObject } from '../objects/InteractableObject';
 import type { GameEventBus } from '../EventBus';
 import { useGameStore } from '../../stores/gameStore';
 
-const T = {
-  GRASS:        1,
-  PATH:         42,  // crossroads
-  PORTAL_F:     54,  // tree/forest symbol
-  PORTAL_A:     65,  // water symbol
-  ECO:          78,  // npc symbol
-};
-
-function buildGreenhavenGround(): number[] {
-  const W = 20;
-  const H = 20;
-  const map: number[] = new Array(W * H).fill(T.GRASS);
-
-  const set = (x: number, y: number, id: number) => {
-    if (x >= 0 && x < W && y >= 0 && y < H) map[y * W + x] = id;
-  };
-
-  // Center platform
-  for (let y = 8; y <= 11; y++) {
-    for (let x = 8; x <= 11; x++) {
-      set(x, y, T.PATH);
-    }
-  }
-
-  return map;
-}
-
 export class GreenhavenScene extends Phaser.Scene {
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -39,22 +12,11 @@ export class GreenhavenScene extends Phaser.Scene {
   private interactables: InteractableObject[] = [];
   private nearbyObject: InteractableObject | null = null;
   private promptText!: Phaser.GameObjects.Text;
-  private groundLayer!: Phaser.Tilemaps.TilemapLayer;
-
+  
   static readonly TILE = 16;
 
   constructor() {
     super({ key: 'GreenhavenScene' });
-  }
-
-  preload() {
-    if (!this.textures.exists('tilemap-packed')) {
-      this.load.image('tilemap-packed', 'assets/shared/tilemap_packed.png');
-    }
-    // We can use single tiles for objects
-    if (!this.textures.exists('obj-eco'))      this.load.image('obj-eco',      'assets/tiles/tile_0078.png');
-    if (!this.textures.exists('obj-portal-f')) this.load.image('obj-portal-f', 'assets/tiles/tile_0054.png');
-    if (!this.textures.exists('obj-portal-a')) this.load.image('obj-portal-a', 'assets/tiles/tile_0065.png');
   }
 
   create() {
@@ -67,27 +29,19 @@ export class GreenhavenScene extends Phaser.Scene {
   }
 
   private setupTilemap() {
-    const TILE = GreenhavenScene.TILE;
-    const W = 20, H = 20;
-
-    const map = this.make.tilemap({ tileWidth: TILE, tileHeight: TILE, width: W, height: H });
-    const tileset = map.addTilesetImage('tiny-town', 'tilemap-packed', TILE, TILE, 0, 0)!;
-
-    this.groundLayer = map.createBlankLayer('Ground', tileset, 0, 0)!;
-    const groundData = buildGreenhavenGround();
-    for (let y = 0; y < H; y++) {
-      for (let x = 0; x < W; x++) {
-        const tileId = groundData[y * W + x];
-        this.groundLayer.putTileAt(tileId - 1, x, y);
-      }
-    }
-
-    this.physics.world.setBounds(0, 0, W * TILE, H * TILE);
+    const map = this.make.tilemap({ key: 'map-greenhaven' });
+    const tileset = map.addTilesetImage('tiny-dungeon', 'tilemap-packed')!;
+    
+    map.createLayer('Ground', tileset, 0, 0);
+    map.createLayer('Details', tileset, 0, 0);
+    
+    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    this.registry.set('currentMap', map);
   }
 
   private setupPlayer() {
     const TILE = GreenhavenScene.TILE;
-    this.player = new Player(this, 10 * TILE, 14 * TILE);
+    this.player = new Player(this, 15 * TILE, 17 * TILE); // Centered
     this.add.existing(this.player);
     this.physics.add.existing(this.player);
     (this.player.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
@@ -105,39 +59,42 @@ export class GreenhavenScene extends Phaser.Scene {
   }
 
   private setupInteractables() {
-    const TILE = GreenhavenScene.TILE;
-    
-    // Check crystal states
-    const crystals = useGameStore.getState().crystals;
-    
-    const items = [
-      { tx: 10, ty: 8,  texture: 'obj-eco',      id: 'eco_guide_01', type: 'dialogue' as const, label: 'ECO\n[E] Talk' },
-      { tx: 8,  ty: 9,  texture: 'obj-portal-f', id: 'portal_forest',type: 'portal_f' as const, label: 'Portal: Forestia\n[E] Enter' },
-      { tx: 12, ty: 9,  texture: 'obj-portal-a', id: 'portal_aqua',  type: 'portal_a' as const, label: 'Portal: Aquaria\n[E] Enter' },
-    ];
+    const map: Phaser.Tilemaps.Tilemap = this.registry.get('currentMap');
+    const objectLayer = map.getObjectLayer('Objects');
+    if (!objectLayer) return;
 
-    for (const item of items) {
+    const crystals = useGameStore.getState().crystals;
+
+    for (const objData of objectLayer.objects) {
+      const props = objData.properties || [];
+      const getProp = (name: string) => props.find((p: any) => p.name === name)?.value;
+
+      const type = objData.type as any;
+      const id = getProp('interactionId') || '';
+      const texture = getProp('texture') || 'obj-eco'; // fallback
+      const label = getProp('label') || '';
+
       const obj = new InteractableObject(
         this,
-        item.tx * TILE + 8,
-        item.ty * TILE + 8,
-        item.texture,
-        { id: item.id, type: item.type as any, label: item.label },
+        (objData.x || 0) + 8, // Center of 16x16
+        (objData.y || 0) + 8, // Center
+        texture,
+        { id, type, label }
       );
-      
-      if (item.type === 'portal_f' && crystals.forestia) obj.setTint(0x00ff00);
-      if (item.type === 'portal_a' && crystals.aquaria) obj.setTint(0x0088ff);
-      
+
+      if (type === 'portal_f' && crystals.forestia) obj.setTint(0x00ff00);
+      if (type === 'portal_a' && crystals.aquaria) obj.setTint(0x0088ff);
+
       this.interactables.push(obj);
       this.add.existing(obj);
     }
   }
 
   private setupCamera() {
-    const TILE = GreenhavenScene.TILE;
+    const map = this.registry.get('currentMap');
     this.cameras.main.setZoom(4);
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-    this.cameras.main.setBounds(0, 0, 20 * TILE, 20 * TILE);
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBackgroundColor('#1a2f2b');
   }
 
@@ -155,8 +112,7 @@ export class GreenhavenScene extends Phaser.Scene {
   update() {
     const speed = 80;
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    let vx = 0;
-    let vy = 0;
+    let vx = 0; let vy = 0;
 
     if (this.cursors.left.isDown  || this.wasd.left.isDown)  vx -= speed;
     if (this.cursors.right.isDown || this.wasd.right.isDown) vx += speed;
