@@ -57,7 +57,11 @@ export class PreloadScene extends Phaser.Scene {
 
     // Load Tiled JSON maps
     this.load.tilemapTiledJSON('map-greenhaven', 'maps/greenhaven.json');
-    this.load.tilemapTiledJSON('map-forestia', 'maps/forestia.json');
+    this.load.tilemapTiledJSON('map-forestia-01', 'maps/forestia-01.json');
+    this.load.tilemapTiledJSON('map-forestia-02', 'maps/forestia-02.json');
+    this.load.tilemapTiledJSON('map-forestia-03', 'maps/forestia-03.json');
+    this.load.tilemapTiledJSON('map-forestia-04', 'maps/forestia-04.json');
+    this.load.tilemapTiledJSON('map-forestia-05', 'maps/forestia-05.json');
     this.load.tilemapTiledJSON('map-aquaria', 'maps/aquaria.json');
 
     // Player sprite (we use procedural drawing, but still need a key)

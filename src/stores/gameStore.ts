@@ -42,7 +42,15 @@ export interface GameState {
   completedLessons: string[];
 
   // UI
+  isModalOpen: boolean;
   activeModal: null | { type: 'lesson' | 'quest' | 'minigame' | 'dialogue'; id: string };
+
+  // Forestia Specifics
+  forestiaQuests: {
+    f01_clues: string[];
+    f02_foodweb_done: boolean;
+    f05_capstone_done: boolean;
+  };
 
   // Actions
   addXP: (amount: number) => void;
@@ -55,6 +63,9 @@ export interface GameState {
   setWorld: (world: 'greenhaven' | 'forestia' | 'aquaria') => void;
   completeLesson: (id: string) => void;
   awakenCrystal: (world: 'forestia' | 'aquaria') => void;
+  addF01Clue: (clueId: string) => void;
+  setF02FoodWebDone: () => void;
+  setF05CapstoneDone: () => void;
 }
 
 const INITIAL_QUESTS: Quest[] = [
@@ -105,7 +116,14 @@ export const useGameStore = create<GameState>((set, get) => ({
   quests: INITIAL_QUESTS,
   badges: INITIAL_BADGES,
   completedLessons: [],
+  isModalOpen: false,
   activeModal: null,
+
+  forestiaQuests: {
+    f01_clues: [],
+    f02_foodweb_done: false,
+    f05_capstone_done: false,
+  },
 
   addXP: (amount) => {
     const { xp, xpToNext, level } = get();
@@ -139,8 +157,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     }));
   },
 
-  openModal: (type, id) => set({ activeModal: { type, id } }),
-  closeModal: () => set({ activeModal: null }),
+  openModal: (type, id) => set({ activeModal: { type, id }, isModalOpen: true }),
+  closeModal: () => set({ activeModal: null, isModalOpen: false }),
 
   setWorld: (world) => set({ currentWorld: world }),
 
@@ -149,4 +167,19 @@ export const useGameStore = create<GameState>((set, get) => ({
     get().addXP(30);
     set(state => ({ completedLessons: [...state.completedLessons, id] }));
   },
+
+  addF01Clue: (clueId) => set((state) => {
+    if (state.forestiaQuests.f01_clues.includes(clueId)) return state;
+    return {
+      forestiaQuests: { ...state.forestiaQuests, f01_clues: [...state.forestiaQuests.f01_clues, clueId] }
+    };
+  }),
+
+  setF02FoodWebDone: () => set((state) => ({
+    forestiaQuests: { ...state.forestiaQuests, f02_foodweb_done: true }
+  })),
+
+  setF05CapstoneDone: () => set((state) => ({
+    forestiaQuests: { ...state.forestiaQuests, f05_capstone_done: true }
+  })),
 }));

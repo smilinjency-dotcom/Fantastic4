@@ -12,11 +12,16 @@ export class ForestiaScene extends Phaser.Scene {
   private interactables: InteractableObject[] = [];
   private nearbyObject: InteractableObject | null = null;
   private promptText!: Phaser.GameObjects.Text;
+  private mapId: string = 'map-forestia-01';
 
   static readonly TILE = 16;
 
   constructor() {
     super({ key: 'ForestiaScene' });
+  }
+
+  init(data: any) {
+    this.mapId = data?.mapId || 'map-forestia-01';
   }
 
   create() {
@@ -29,7 +34,7 @@ export class ForestiaScene extends Phaser.Scene {
   }
 
   private setupTilemap() {
-    const map = this.make.tilemap({ key: 'map-forestia' });
+    const map = this.make.tilemap({ key: this.mapId });
     const tileset = map.addTilesetImage('tiny-dungeon', 'tilemap-packed')!;
     
     map.createLayer('Ground', tileset, 0, 0);
@@ -141,11 +146,16 @@ export class ForestiaScene extends Phaser.Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.interactKey) && this.nearbyObject) {
       const type = this.nearbyObject.interactionType;
-      if (type === 'portal_hub') {
+      const id = this.nearbyObject.interactionId;
+      const eventBus: GameEventBus = (this.game as any).eventBus;
+      
+      if (id.startsWith('portal_f0')) {
+        const targetMap = id.replace('portal_', 'map-forestia-');
+        this.scene.restart({ mapId: targetMap });
+      } else if (type === 'portal_hub') {
         useGameStore.getState().setWorld('greenhaven');
       } else {
-        const eventBus: GameEventBus = (this.game as any).eventBus;
-        eventBus?.emit('interaction', { type: type as any, id: this.nearbyObject.interactionId });
+        eventBus?.emit('interaction', { type: type as any, id: id });
       }
     }
   }

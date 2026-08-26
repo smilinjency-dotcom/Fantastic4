@@ -88,37 +88,106 @@ function generateGreenhaven() {
   return { W, H, ground, details, objects };
 }
 
-function generateForestia() {
+function generateF01() {
   const W = 30; const H = 30;
   const ground = createEmptyMap(W, H);
   const details = createEmptyMap(W, H);
   const objects = [];
 
   for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      setTile(ground, W, H, x, y, T.GRASS);
-      if (Math.random() < 0.2) setTile(ground, W, H, x, y, T.GRASS_ALT);
-    }
+    for (let x = 0; x < W; x++) setTile(ground, W, H, x, y, T.GRASS);
   }
 
-  // Draw some dirt paths
-  for (let y = 16; y <= 22; y++) setTile(ground, W, H, 15, y, T.DIRT);
-  for (let x = 10; x <= 20; x++) setTile(ground, W, H, x, 16, T.DIRT);
-
-  // Add lots of trees (Forestia)
-  for (let i = 0; i < 40; i++) {
-    const tx = Math.floor(Math.random() * W);
-    const ty = Math.floor(Math.random() * (H - 3));
-    // don't block center
-    if (tx > 10 && tx < 20 && ty > 10 && ty < 22) continue;
-    
-    setTile(details, W, H, tx, ty, T.TREE_PINE_T);
-    setTile(details, W, H, tx, ty+1, T.TREE_PINE_M);
-    setTile(details, W, H, tx, ty+2, T.TREE_PINE_B);
+  // Draw some trees
+  for (let tx of [4, 7, 10, 12, 5, 9]) {
+    setTile(details, W, H, tx, 5, T.TREE_PINE_T);
+    setTile(details, W, H, tx, 6, T.TREE_PINE_M);
+    setTile(details, W, H, tx, 7, T.TREE_PINE_B);
   }
+
+  // Cleared patch
+  for (let y = 10; y <= 18; y++) {
+    for (let x = 14; x <= 23; x++) setTile(ground, W, H, x, y, T.DIRT);
+  }
+
+  objects.push({ id: 1, name: 'Hub Portal', type: 'portal_hub', x: 15*16, y: 25*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_hub'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Portal: Greenhaven\n[E] Return'}]});
+  objects.push({ id: 2, name: 'Clue 1', type: 'lesson', x: 17*16, y: 12*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f01_clue1'}, {name:'texture', type:'string', value:String(T.WELL)}, {name:'label', type:'string', value:'Fallen Tree\n[E] Inspect'}]});
+  objects.push({ id: 3, name: 'Clue 2', type: 'lesson', x: 18*16, y: 10*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f01_clue2'}, {name:'texture', type:'string', value:String(T.WELL)}, {name:'label', type:'string', value:'Empty Nest\n[E] Inspect'}]});
+  objects.push({ id: 4, name: 'Clue 3', type: 'lesson', x: 16*16, y: 17*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f01_clue3'}, {name:'texture', type:'string', value:String(T.WELL)}, {name:'label', type:'string', value:'Struggling Plant\n[E] Inspect'}]});
+  objects.push({ id: 5, name: 'Ranger', type: 'dialogue', x: 25*16, y: 12*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f01_ranger'}, {name:'texture', type:'string', value:String(T.ECO)}, {name:'label', type:'string', value:'Ranger\n[E] Talk'}]});
+  objects.push({ id: 6, name: 'Path to F-02', type: 'portal_f02', x: 15*16, y: 2*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f02'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Living Forest\n[E] Enter'}]});
+
+  return { W, H, ground, details, objects };
+}
+
+function generateF02() {
+  const W = 30; const H = 30;
+  const ground = createEmptyMap(W, H);
+  const details = createEmptyMap(W, H);
+  const objects = [];
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) setTile(ground, W, H, x, y, T.GRASS);
+  }
+
+  objects.push({ id: 1, name: 'Path to F-01', type: 'portal_f01', x: 15*16, y: 28*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f01'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Forest Entrance\n[E] Return'}]});
+  objects.push({ id: 2, name: 'Researcher', type: 'dialogue', x: 21*16, y: 13*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f02_researcher'}, {name:'texture', type:'string', value:String(T.ECO)}, {name:'label', type:'string', value:'Researcher\n[E] Talk'}]});
+  objects.push({ id: 3, name: 'Path to F-03', type: 'portal_f03', x: 15*16, y: 2*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f03'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Broken Habitat\n[E] Enter'}]});
   
-  objects.push({ id: 1, name: 'Hub Portal', type: 'portal_hub', x: 15*16, y: 20*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_hub'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Portal: Greenhaven\n[E] Return'}]});
-  objects.push({ id: 2, name: 'Oak Tree', type: 'lesson', x: 15*16, y: 15*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'oak_tree_01'}, {name:'texture', type:'string', value:String(T.TREE_PINE_B)}, {name:'label', type:'string', value:'Ancient Oak\n[E] Inspect'}]});
+  return { W, H, ground, details, objects };
+}
+
+function generateF03() {
+  const W = 30; const H = 30;
+  const ground = createEmptyMap(W, H);
+  const details = createEmptyMap(W, H);
+  const objects = [];
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) setTile(ground, W, H, x, y, T.GRASS);
+  }
+
+  objects.push({ id: 1, name: 'Path to F-02', type: 'portal_f02', x: 15*16, y: 28*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f02'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Living Forest\n[E] Return'}]});
+  objects.push({ id: 2, name: 'Villager', type: 'dialogue', x: 25*16, y: 17*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f03_villager'}, {name:'texture', type:'string', value:String(T.ECO)}, {name:'label', type:'string', value:'Villager\n[E] Talk'}]});
+  objects.push({ id: 3, name: 'Path to F-04', type: 'portal_f04', x: 15*16, y: 2*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f04'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Wildlife Sanctuary\n[E] Enter'}]});
+  
+  return { W, H, ground, details, objects };
+}
+
+function generateF04() {
+  const W = 30; const H = 30;
+  const ground = createEmptyMap(W, H);
+  const details = createEmptyMap(W, H);
+  const objects = [];
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) setTile(ground, W, H, x, y, T.GRASS);
+  }
+
+  objects.push({ id: 1, name: 'Path to F-03', type: 'portal_f03', x: 15*16, y: 28*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f03'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Broken Habitat\n[E] Return'}]});
+  objects.push({ id: 2, name: 'Researcher', type: 'dialogue', x: 20*16, y: 6*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f04_researcher'}, {name:'texture', type:'string', value:String(T.ECO)}, {name:'label', type:'string', value:'Researcher\n[E] Talk'}]});
+  objects.push({ id: 3, name: 'Path to F-05', type: 'portal_f05', x: 15*16, y: 2*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f05'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Ancient Tree\n[E] Enter'}]});
+  
+  return { W, H, ground, details, objects };
+}
+
+function generateF05() {
+  const W = 30; const H = 30;
+  const ground = createEmptyMap(W, H);
+  const details = createEmptyMap(W, H);
+  const objects = [];
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) setTile(ground, W, H, x, y, T.GRASS);
+  }
+
+  // Ancient Tree
+  setTile(details, W, H, 15, 13, T.TREE_PINE_T);
+  setTile(details, W, H, 15, 14, T.TREE_PINE_M);
+  setTile(details, W, H, 15, 15, T.TREE_PINE_B);
+
+  objects.push({ id: 1, name: 'Path to F-04', type: 'portal_f04', x: 15*16, y: 28*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_f04'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Wildlife Sanctuary\n[E] Return'}]});
+  objects.push({ id: 2, name: 'Ancient Tree', type: 'quest', x: 15*16, y: 16*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'f05_capstone'}, {name:'texture', type:'string', value:String(T.TARGET)}, {name:'label', type:'string', value:'Capstone\n[E] Start'}]});
   
   return { W, H, ground, details, objects };
 }
@@ -181,7 +250,11 @@ const outDir = path.join(__dirname, '../public/maps');
 if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
 fs.writeFileSync(path.join(outDir, 'greenhaven.json'), JSON.stringify(createTiledJSON(generateGreenhaven()), null, 2));
-fs.writeFileSync(path.join(outDir, 'forestia.json'), JSON.stringify(createTiledJSON(generateForestia()), null, 2));
+fs.writeFileSync(path.join(outDir, 'forestia-01.json'), JSON.stringify(createTiledJSON(generateF01()), null, 2));
+fs.writeFileSync(path.join(outDir, 'forestia-02.json'), JSON.stringify(createTiledJSON(generateF02()), null, 2));
+fs.writeFileSync(path.join(outDir, 'forestia-03.json'), JSON.stringify(createTiledJSON(generateF03()), null, 2));
+fs.writeFileSync(path.join(outDir, 'forestia-04.json'), JSON.stringify(createTiledJSON(generateF04()), null, 2));
+fs.writeFileSync(path.join(outDir, 'forestia-05.json'), JSON.stringify(createTiledJSON(generateF05()), null, 2));
 fs.writeFileSync(path.join(outDir, 'aquaria.json'), JSON.stringify(createTiledJSON(generateAquaria()), null, 2));
 
 console.log('Successfully generated Tiled JSON maps.');
