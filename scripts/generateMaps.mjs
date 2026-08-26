@@ -95,10 +95,30 @@ function generateForestia() {
   const objects = [];
 
   for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) setTile(ground, W, H, x, y, T.GRASS);
+    for (let x = 0; x < W; x++) {
+      setTile(ground, W, H, x, y, T.GRASS);
+      if (Math.random() < 0.2) setTile(ground, W, H, x, y, T.GRASS_ALT);
+    }
+  }
+
+  // Draw some dirt paths
+  for (let y = 16; y <= 22; y++) setTile(ground, W, H, 15, y, T.DIRT);
+  for (let x = 10; x <= 20; x++) setTile(ground, W, H, x, 16, T.DIRT);
+
+  // Add lots of trees (Forestia)
+  for (let i = 0; i < 40; i++) {
+    const tx = Math.floor(Math.random() * W);
+    const ty = Math.floor(Math.random() * (H - 3));
+    // don't block center
+    if (tx > 10 && tx < 20 && ty > 10 && ty < 22) continue;
+    
+    setTile(details, W, H, tx, ty, T.TREE_PINE_T);
+    setTile(details, W, H, tx, ty+1, T.TREE_PINE_M);
+    setTile(details, W, H, tx, ty+2, T.TREE_PINE_B);
   }
   
   objects.push({ id: 1, name: 'Hub Portal', type: 'portal_hub', x: 15*16, y: 20*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_hub'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Portal: Greenhaven\n[E] Return'}]});
+  objects.push({ id: 2, name: 'Oak Tree', type: 'lesson', x: 15*16, y: 15*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'oak_tree_01'}, {name:'texture', type:'string', value:String(T.TREE_PINE_B)}, {name:'label', type:'string', value:'Ancient Oak\n[E] Inspect'}]});
   
   return { W, H, ground, details, objects };
 }
@@ -109,11 +129,32 @@ function generateAquaria() {
   const details = createEmptyMap(W, H);
   const objects = [];
 
+  // Base grass
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) setTile(ground, W, H, x, y, T.GRASS);
   }
 
-  objects.push({ id: 1, name: 'Hub Portal', type: 'portal_hub', x: 5*16, y: 15*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_hub'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Portal: Greenhaven\n[E] Return'}]});
+  // Large stone paved area (City/Aquaria)
+  for (let y = 10; y <= 25; y++) {
+    for (let x = 8; x <= 22; x++) setTile(ground, W, H, x, y, T.STONE);
+  }
+
+  // Water canals
+  for (let y = 0; y < H; y++) {
+    setTile(ground, W, H, 12, y, T.WATER || 26); // assuming 26 is water if T.WATER is missing
+    setTile(ground, W, H, 18, y, T.WATER || 26);
+  }
+
+  // Add some Houses along the canal
+  for (let x of [9, 20]) {
+    for (let y of [12, 18]) {
+      setTile(details, W, H, x, y, T.HOUSE_WALL);
+      setTile(details, W, H, x, y-1, T.ROOF_RED);
+    }
+  }
+
+  objects.push({ id: 1, name: 'Hub Portal', type: 'portal_hub', x: 15*16, y: 15*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'portal_hub'}, {name:'texture', type:'string', value:String(T.PORTAL)}, {name:'label', type:'string', value:'Portal: Greenhaven\n[E] Return'}]});
+  objects.push({ id: 2, name: 'Water Filter', type: 'quest', x: 12*16, y: 15*16, width: 16, height: 16, properties: [{name:'interactionId', type:'string', value:'water_treat_01'}, {name:'texture', type:'string', value:String(T.WELL)}, {name:'label', type:'string', value:'Water Filter\n[E] Inspect'}]});
 
   return { W, H, ground, details, objects };
 }
