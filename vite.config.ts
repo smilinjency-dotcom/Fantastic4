@@ -1,15 +1,12 @@
-import { defineConfig } from "@tanstack/react-start/config";
-import tsConfigPaths from "vite-tsconfig-paths";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
-  vite: {
-    plugins: [tsConfigPaths(), tailwindcss()],
-  },
-  server: {
-    // Vercel deployment preset (Nitro). Change to 'cloudflare' or 'node' as needed.
-    preset: "vercel",
-    // Redirect TanStack Start's bundled server entry to src/server.ts (SSR error wrapper).
-    entry: "server",
+  tanstackStart: {
+    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
+    // nitro/vite builds from this
+    server: { 
+      preset: "vercel",
+      entry: "server" 
+    },
   },
 });
