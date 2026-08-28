@@ -1,29 +1,46 @@
-# Welcome to your Lovable project
+# EcoQuest — Restore the Planet
 
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+An environmental education game built with TanStack Start, React, and Supabase. Explore Forestia and Aquaria, complete quests, and restore the world's ecosystems.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+You need Node.js ≥ 18 and npm.
 
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
-npm i
+cp .env.example .env   # fill in your Supabase credentials
+npm install
 npm run dev
 ```
 
-## Built with
+## Environment Variables
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+See `.env.example` for all required variables. At minimum you need:
+
+- `SUPABASE_URL` — your Supabase project URL
+- `SUPABASE_PUBLISHABLE_KEY` — your Supabase publishable (anon) API key
+- `CRON_SECRET` — a strong random secret used to authenticate scheduled cron requests
+
+## Deployment
+
+This project targets **Vercel** via Nitro. Run `npm run build` and deploy the output, or connect the repository to Vercel for automatic deployments.
+
+To change the deployment target, update the `preset` field in [`vite.config.ts`](./vite.config.ts).
+
+## Database
+
+Schema and RLS policies live in [`supabase/migrations/`](./supabase/migrations/). To apply them to a new Supabase project:
+
+```sh
+npx supabase db push
+```
+
+## Tech Stack
+
+- [TanStack Start](https://tanstack.com/start) — full-stack React framework
+- [TanStack Router](https://tanstack.com/router) — type-safe routing
+- [Supabase](https://supabase.com) — auth + Postgres database
+- [Tailwind CSS v4](https://tailwindcss.com) — styling
+- [Phaser 3](https://phaser.io) — game engine
+- [TypeScript](https://www.typescriptlang.org) — type safety

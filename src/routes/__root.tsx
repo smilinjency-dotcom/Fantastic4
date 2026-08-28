@@ -10,7 +10,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportError } from "../lib/error-reporting";
+
 
 function NotFoundComponent() {
   return (
@@ -38,7 +39,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportError(error, { boundary: "tanstack_root_error_component" });
+
   }, [error]);
 
   return (
@@ -77,14 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "EcoQuest — Restore the Planet" },
+      { name: "description", content: "An environmental education game. Explore Forestia and Aquaria, complete quests, and restore the world's ecosystems." },
+      { name: "author", content: "Quantara" },
+      { property: "og:title", content: "EcoQuest — Restore the Planet" },
+      { property: "og:description", content: "Explore two immersive worlds, learn about environmental science, and complete quests to restore damaged ecosystems." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
