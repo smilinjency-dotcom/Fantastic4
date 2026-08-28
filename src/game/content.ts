@@ -241,7 +241,9 @@ export type InteractableKind =
   | "minigame"
   | "capstone"
   | "travel"
-  | "core";
+  | "core"
+  | "ai_chat"
+  | "eco_lens";
 
 export interface Interactable {
   id: string;
@@ -254,21 +256,22 @@ export interface Interactable {
 
 export const INTERACTABLES: Record<WorldId, Interactable[]> = {
   greenhaven: [
-    { id: "gh_eco", kind: "dialogue", target: "eco_intro", tx: 16, ty: 16, label: "ECO" },
+    { id: "gh_eco", kind: "ai_chat", target: "gh_eco", tx: 16, ty: 16, label: "ECO" },
+    { id: "gh_lens", kind: "eco_lens", target: "eco_lens", tx: 22, ty: 15, label: "Eco-Lens Terminal" },
     { id: "gh_core", kind: "core", target: "earth_core", tx: 20, ty: 15, label: "Earth Core" },
     { id: "gh_west", kind: "travel", target: "forestia", tx: 3, ty: 13, label: "West gate — Forestia" },
     { id: "gh_east", kind: "travel", target: "aquaria", tx: 36, ty: 13, label: "East gate — Aquaria" },
   ],
   forestia: [
-    { id: "fo_ranger", kind: "dialogue", target: "ranger_hollis", tx: 33, ty: 23, label: "Ranger Hollis" },
+    { id: "fo_ranger", kind: "ai_chat", target: "fo_ranger", tx: 33, ty: 23, label: "Ranger Hollis" },
     { id: "fo_station", kind: "interaction", target: "sort_station", tx: 31, ty: 22, label: "Recycling station" },
     { id: "fo_clearcut", kind: "interaction", target: "clearcut", tx: 5, ty: 23, label: "The clear-cut" },
-    { id: "fo_nyla", kind: "dialogue", target: "biologist_nyla", tx: 36, ty: 32, label: "Dr. Nyla" },
+    { id: "fo_nyla", kind: "ai_chat", target: "fo_nyla", tx: 36, ty: 32, label: "Dr. Nyla" },
     { id: "fo_tree", kind: "dialogue", target: "ancient_tree_intro", tx: 25, ty: 9, label: "Ancient Tree" },
     { id: "fo_home", kind: "travel", target: "greenhaven", tx: 25, ty: 42, label: "Road home" },
   ],
   aquaria: [
-    { id: "aq_mara", kind: "dialogue", target: "hydrologist_mara", tx: 10, ty: 30, label: "Mara of the Locks" },
+    { id: "aq_mara", kind: "ai_chat", target: "aq_mara", tx: 10, ty: 30, label: "Mara of the Locks" },
     { id: "aq_treatment", kind: "interaction", target: "treatment", tx: 9, ty: 29, label: "Treatment works" },
     { id: "aq_outflow", kind: "interaction", target: "water_cycle", tx: 38, ty: 33, label: "Industrial outflow" },
     { id: "aq_lake", kind: "dialogue", target: "crystal_lake_intro", tx: 25, ty: 13, label: "Crystal Lake" },

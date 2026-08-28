@@ -28,6 +28,9 @@ export function createGame(parent: string): Phaser.Game {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
+    audio: {
+      disableWebAudio: true,
+    },
     render: {
       pixelArt: true,
       antialias: false,

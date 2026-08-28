@@ -1,6 +1,8 @@
 import { useGameStore, xpToNext } from "@/stores/gameStore";
 import { BADGES, CRYSTALS, QUESTS, WORLDS } from "@/game/content";
 import { supabase } from "@/integrations/supabase/client";
+import { generateWorldDescription } from "@/server/ai/world";
+import { useEffect, useState } from "react";
 
 export default function HUD() {
   const { xp, level, crystals, badges, quests, worldHealth, currentWorld, displayName, openModal } =
@@ -10,6 +12,17 @@ export default function HUD() {
   const activeQuest = activeQuestId ? QUESTS[activeQuestId] : null;
   const pct = Math.min(100, Math.round((xp / xpToNext(level)) * 100));
   const health = worldHealth[currentWorld] ?? "damaged";
+  
+  const [desc, setDesc] = useState<string | null>(null);
+  
+  useEffect(() => {
+    let active = true;
+    setDesc(null);
+    generateWorldDescription({ data: { worldId: currentWorld, health, isNew: true } })
+      .then(res => { if (active && res.success) setDesc(res.text); })
+      .catch(err => console.error("Desc error:", err));
+    return () => { active = false; };
+  }, [currentWorld, health]);
 
   return (
     <div className="eq-hud">
@@ -41,6 +54,11 @@ export default function HUD() {
         <div className="eq-world">
           <strong>{WORLDS[currentWorld].name}</strong>
           <span className={`eq-health eq-health-${health}`}>{health}</span>
+          {desc ? (
+             <p className="text-xs text-muted-foreground mt-2 italic border-l-2 border-primary/50 pl-2">{desc}</p>
+          ) : (
+             <p className="text-xs text-muted-foreground mt-2 italic animate-pulse">Observing ecosystem...</p>
+          )}
         </div>
         {activeQuest ? (
           <div className="eq-quest">

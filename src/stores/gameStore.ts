@@ -10,7 +10,7 @@ import {
 } from "@/game/content";
 
 export interface ActiveModal {
-  kind: "dialogue" | "interaction" | "minigame" | "capstone" | "ending";
+  kind: "dialogue" | "interaction" | "minigame" | "capstone" | "ending" | "ai_chat" | "eco_lens";
   id: string;
 }
 

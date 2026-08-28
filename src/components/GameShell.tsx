@@ -7,6 +7,8 @@ import HUD from "./ui/HUD";
 import WorldSelector from "./ui/WorldSelector";
 import DialogueModal from "./modals/DialogueModal";
 import InteractionModal from "./modals/InteractionModal";
+import AiChatModal from "./modals/AiChatModal";
+import EcoLensModal from "./modals/EcoLensModal";
 import FoodWebMinigame from "./minigames/FoodWebMinigame";
 import ForestiaCapstone from "./minigames/ForestiaCapstone";
 import AquariaCapstone from "./minigames/AquariaCapstone";
@@ -19,6 +21,8 @@ function ActiveModal() {
   if (!modal) return null;
   if (modal.kind === "dialogue") return <DialogueModal id={modal.id} />;
   if (modal.kind === "interaction") return <InteractionModal id={modal.id} />;
+  if (modal.kind === "ai_chat") return <AiChatModal id={modal.id} />;
+  if (modal.kind === "eco_lens") return <EcoLensModal />;
   if (modal.kind === "minigame") return <FoodWebMinigame />;
   if (modal.kind === "ending") return <EndingSequence />;
   if (modal.kind === "capstone")
