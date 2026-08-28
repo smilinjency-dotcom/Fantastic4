@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tileset Viewer</title>
+    <style>
+        body { font-family: sans-serif; background: #222; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .grid-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .grid-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: grid;
+            grid-template-columns: repeat(12, 48px);
+            grid-template-rows: repeat(11, 48px);
+            pointer-events: none;
+        }
+        .grid-cell {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding: 2px;
+            font-size: 10px;
+            font-weight: bold;
+            color: yellow;
+            text-shadow: 1px 1px 0 #000;
+        }
+        img {
+            width: 576px; /* 192 * 3 */
+            height: 528px; /* 176 * 3 */
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <h2>Kenney Tiny Dungeon - Tile IDs</h2>
+    <p>Please look at the numbers in the grid cells to find the exact Tile IDs.</p>
+    <div class="grid-container">
+        <img src="/assets/shared/tilemap_packed.png" alt="Tileset">
+        <div class="grid-overlay" id="overlay"></div>
+    </div>
+    <script>
+        const overlay = document.getElementById('overlay');
+        for (let i = 0; i < 132; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.textContent = i;
+            overlay.appendChild(cell);
+        }
+    </script>
+</body>
+</html>

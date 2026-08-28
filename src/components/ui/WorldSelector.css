@@ -1,0 +1,48 @@
+.world-selector {
+  position: absolute;
+  top: 16px; right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: all;
+  z-index: 10;
+}
+
+.world-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--color-bg-glass);
+  text-align: left;
+  min-width: 160px;
+}
+
+.world-btn:hover {
+  border-color: rgba(34,197,94,0.3);
+  background: rgba(34,197,94,0.06);
+  transform: translateX(-2px);
+}
+
+.world-btn.active {
+  border-color: rgba(34,197,94,0.6);
+  background: rgba(34,197,94,0.12);
+  box-shadow: 0 0 16px rgba(34,197,94,0.2);
+}
+
+.world-btn-label {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-text);
+}
+
+.world-btn-state {
+  font-size: 10px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
